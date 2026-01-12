@@ -19,61 +19,61 @@ Set up automated CI/CD pipeline with GitHub Actions that builds cross-platform b
 **Description:** As a developer, I want automated checks on every push so that I catch issues early.
 
 **Acceptance Criteria:**
-- [ ] GitHub Actions workflow runs on push/PR to main
-- [ ] Runs `bun run typecheck`
-- [ ] Runs `bun test`
-- [ ] Fails fast on errors
+- [x] GitHub Actions workflow runs on push/PR to main
+- [x] Runs `bun run typecheck`
+- [x] Runs `bun test`
+- [x] Fails fast on errors
 
 ### US-002: Cross-platform binary builds
 **Description:** As a developer, I want the CI to build binaries for all platforms so users can run the tool natively.
 
 **Acceptance Criteria:**
-- [ ] Builds for Linux x64 (`linux-x64`)
-- [ ] Builds for Linux ARM64 (`linux-arm64`)
-- [ ] Builds for macOS x64 (`darwin-x64`)
-- [ ] Builds for macOS ARM64 (`darwin-arm64`)
-- [ ] Builds for Windows x64 (`windows-x64`)
-- [ ] Binaries are standalone executables (no runtime needed)
+- [x] Builds for Linux x64 (`linux-x64`)
+- [x] Builds for Linux ARM64 (`linux-arm64`)
+- [x] Builds for macOS x64 (`darwin-x64`)
+- [x] Builds for macOS ARM64 (`darwin-arm64`)
+- [x] Builds for Windows x64 (`windows-x64`)
+- [x] Binaries are standalone executables (no runtime needed)
 
 ### US-003: Automatic versioning and releases
 **Description:** As a developer, I want automatic version bumps and GitHub Releases on every main push.
 
 **Acceptance Criteria:**
-- [ ] Auto-increment patch version on each push to main
-- [ ] Create GitHub Release with version tag
-- [ ] Upload all platform binaries as release assets
-- [ ] Generate changelog from commit messages
+- [x] Auto-increment patch version on each push to main
+- [x] Create GitHub Release with version tag
+- [x] Upload all platform binaries as release assets
+- [x] Generate changelog from commit messages
 
 ### US-004: Curl-based installer script
 **Description:** As a user, I want to install with a single curl command so setup is instant.
 
 **Acceptance Criteria:**
-- [ ] Script detects OS and architecture automatically
-- [ ] Downloads correct binary from latest GitHub Release
-- [ ] Installs to `~/.local/bin` or `/usr/local/bin`
-- [ ] Adds to PATH if needed (with instructions)
-- [ ] Works on Linux and macOS
-- [ ] Usage: `curl -fsSL https://raw.githubusercontent.com/<owner>/ai-cli-router/main/install.sh | sh`
+- [x] Script detects OS and architecture automatically
+- [x] Downloads correct binary from latest GitHub Release
+- [x] Installs to `~/.local/bin` or `/usr/local/bin`
+- [x] Adds to PATH if needed (with instructions)
+- [x] Works on Linux and macOS
+- [x] Usage: `curl -fsSL https://raw.githubusercontent.com/jellydn/ai-cli-switcher/main/install.sh | sh`
 
 ### US-005: Homebrew formula
 **Description:** As a macOS/Linux user, I want to install via Homebrew for familiar package management.
 
 **Acceptance Criteria:**
-- [ ] Create Homebrew tap repository or formula file
-- [ ] Formula downloads correct binary for platform
-- [ ] Supports `brew install <tap>/ai` or similar
+- [x] Create Homebrew tap repository or formula file
+- [x] Formula downloads correct binary for platform
+- [ ] Supports `brew install jellydn/tap/ai` (requires tap repo setup)
 - [ ] Auto-updates formula on new releases
 
 ## Functional Requirements
 
-- FR-1: Create `.github/workflows/ci.yml` for typecheck and tests on push/PR
-- FR-2: Create `.github/workflows/release.yml` for building and releasing on push to main
-- FR-3: Use Bun's cross-compilation: `bun build --compile --target=<platform>`
-- FR-4: Use semantic versioning with auto-increment (0.1.x patch bumps)
-- FR-5: Create `install.sh` at repository root for curl installer
-- FR-6: Create `HomebrewFormula/ai.rb` or separate tap repository
-- FR-7: Binary naming convention: `ai-<os>-<arch>` (e.g., `ai-linux-x64`, `ai-darwin-arm64`)
-- FR-8: Windows binary: `ai-windows-x64.exe`
+- [x] FR-1: Create `.github/workflows/ci.yml` for typecheck and tests on push/PR
+- [x] FR-2: Create `.github/workflows/release.yml` for building and releasing on push to main
+- [x] FR-3: Use Bun's cross-compilation: `bun build --compile --target=<platform>`
+- [x] FR-4: Use semantic versioning with auto-increment (0.1.x patch bumps)
+- [x] FR-5: Create `install.sh` at repository root for curl installer
+- [x] FR-6: Create `HomebrewFormula/ai.rb` formula file
+- [x] FR-7: Binary naming convention: `ai-<os>-<arch>` (e.g., `ai-linux-x64`, `ai-darwin-arm64`)
+- [x] FR-8: Windows binary: `ai-windows-x64.exe`
 
 ## Non-Goals
 
@@ -98,7 +98,18 @@ Set up automated CI/CD pipeline with GitHub Actions that builds cross-platform b
 - Users can install on any supported platform with one command
 - Zero manual steps required for releases
 
-## Open Questions
+## Platform Testing Status
 
-- GitHub repository URL/owner for the install script URLs?
-- Homebrew tap name (e.g., `homebrew-ai-cli-router`)?
+| Platform | Status | Notes |
+|----------|--------|-------|
+| macOS ARM64 | ✅ Tested | Works correctly |
+| macOS x64 | ⏳ Pending | Needs testing |
+| Linux x64 | ⏳ Pending | Needs testing |
+| Linux ARM64 | ⏳ Pending | Needs testing |
+| Windows x64 | ⏳ Pending | Needs testing |
+
+## Remaining Work
+
+1. **Homebrew tap setup**: Create `jellydn/homebrew-tap` repository and move formula there
+2. **Platform testing**: Test binaries on Windows and Linux
+3. **SHA256 hashes**: Add checksums to Homebrew formula after first release

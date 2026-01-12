@@ -313,16 +313,6 @@ git diff | bun run src/index.ts review
 - ANSI color support (optional, enhances experience)
 - UTF-8 encoding recommended
 
-### 🧪 Platform Testing Checklist
-
-- [ ] Interactive fuzzy search launches
-- [ ] Arrow key navigation works
-- [ ] Colors display correctly
-- [ ] Direct invocation works
-- [ ] CCS profile detection (if applicable)
-- [ ] Template substitution
-- [ ] Error messages display properly
-
 ## 🤝 Contributing
 
 1. Fork and clone
