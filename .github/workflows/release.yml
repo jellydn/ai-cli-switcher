@@ -41,7 +41,7 @@ jobs:
       - name: Build for ${{ matrix.target }}
         run: bun build src/index.ts --compile --target=${{ matrix.target }} --outfile dist/${{ matrix.artifact }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact }}
           path: dist/${{ matrix.artifact }}
@@ -82,7 +82,7 @@ jobs:
           git commit -m "chore: bump version to ${{ steps.bump.outputs.version }}" || echo "No changes to commit"
           git push
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           path: dist
           merge-multiple: true
