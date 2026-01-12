@@ -90,7 +90,8 @@ export async function fuzzySelect(items: SelectableItem[]): Promise<SelectionRes
 
     const displayItems = filteredItems.slice(0, maxVisible);
     for (let i = 0; i < displayItems.length; i++) {
-      const item = displayItems[i]!;
+      const item = displayItems[i];
+      if (!item) continue;
       const isSelected = i === selectedIndex;
       const prefix = isSelected ? `${GREEN}▸${RESET}` : " ";
       const indicator = item.isTemplate ? `${YELLOW}[TEMPLATE]${RESET} ` : "  ";
@@ -113,14 +114,14 @@ export async function fuzzySelect(items: SelectableItem[]): Promise<SelectionRes
       lines.push(`${DIM}  No matches${RESET}`);
     }
 
-    stdout.write(lines.join("\n") + "\n");
+    stdout.write(`${lines.join("\n")}\n`);
     return lines.length;
   };
 
   const clear = (lineCount: number) => {
     stdout.write(MOVE_UP(lineCount));
     for (let i = 0; i < lineCount; i++) {
-      stdout.write(CLEAR_LINE + "\n");
+      stdout.write(`${CLEAR_LINE}\n`);
     }
     stdout.write(MOVE_UP(lineCount));
   };

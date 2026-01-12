@@ -82,7 +82,11 @@ function launchTool(command: string, extraArgs: string[] = [], stdinContent: str
   }
 
   const parts = finalCommand.split(/\s+/).filter((p) => p !== "");
-  const cmd = parts[0]!;
+  const cmd = parts[0];
+  if (!cmd) {
+    console.error("Invalid command format");
+    process.exit(1);
+  }
   const args = parts.slice(1);
 
   const child = spawnSync(cmd, args, {
@@ -134,7 +138,11 @@ async function main() {
         launchTool(result.item.command, afterDash, stdinContent);
       }
     } else if (beforeDash.length > 0) {
-      const toolQuery = beforeDash[0]!;
+      const toolQuery = beforeDash[0];
+      if (!toolQuery) {
+        console.error("Invalid tool query");
+        process.exit(1);
+      }
       const lookupResult = findToolByName(toolQuery, lookupItems);
       if (lookupResult.success && lookupResult.item) {
         launchTool(lookupResult.item.command, afterDash, stdinContent);
@@ -147,7 +155,11 @@ async function main() {
   }
 
   if (args.length > 0) {
-    const toolQuery = args[0]!;
+    const toolQuery = args[0];
+    if (!toolQuery) {
+      console.error("Invalid tool query");
+      process.exit(1);
+    }
     const extraArgs = args.slice(1);
 
     const result = findToolByName(toolQuery, lookupItems);

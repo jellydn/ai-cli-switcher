@@ -88,7 +88,7 @@ Verify installation:
 ai --help
 ```
 
-[![ai help](https://i.gyazo.com/ece605e82f7c500a3109eed3bc40fc5c.png)](https://gyazo.com/ece605e82f7c500a3109eed3bc40fc5c)
+[![ai --help](https://i.gyazo.com/271b43515723f8f95a492882fb5cf4c4.png)](https://gyazo.com/271b43515723f8f95a492882fb5cf4c4)
 
 ## Usage
 
