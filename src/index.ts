@@ -48,7 +48,7 @@ EXAMPLES:
     ai -- --version                  Select tool, then show version
 
 CONFIG:
-    ~/.config/ai-router/config.json    Add custom tools, aliases, templates
+    ~/.config/ai-switcher/config.json   Add custom tools, aliases, templates
 `);
   process.exit(0);
 }
@@ -110,7 +110,7 @@ async function main() {
     console.error("   • opencode  - OpenCode AI assistant");
     console.error("   • amp       - Sourcegraph Amp CLI");
     console.error("   • ccs       - Claude Code Switch");
-    console.error("\n📝 Or add custom tools to ~/.config/ai-router/config.json");
+    console.error("\n📝 Or add custom tools to ~/.config/ai-switcher/config.json");
     process.exit(1);
   }
 

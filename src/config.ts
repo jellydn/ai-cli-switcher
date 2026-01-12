@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { Config, ConfigValidationError } from "./types";
 
-const CONFIG_DIR = join(homedir(), ".config", "ai-router");
+const CONFIG_DIR = join(homedir(), ".config", "ai-switcher");
 const CONFIG_PATH = join(CONFIG_DIR, "config.json");
 
 const DEFAULT_CONFIG: Config = {

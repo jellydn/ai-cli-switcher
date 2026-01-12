@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="AI CLI Router Logo" width="400">
+  <img src="docs/logo.svg" alt="AI CLI Switcher Logo" width="400">
 </p>
 
-<h1 align="center">AI CLI Router</h1>
+<h1 align="center">AI CLI Switcher</h1>
  
 <p align="center">
   A fast, secure launcher CLI tool that lets you switch between different AI coding assistants using fuzzy search. Built with TypeScript and Bun for optimal performance.
@@ -23,34 +23,54 @@
 - **⚡ Direct Invocation**: Skip the menu with `ai <toolname>` or fuzzy matching
 - **🏷️ Aliases**: Define short aliases for frequently used tools (e.g., `ai c` for claude)
 - **📋 Templates**: Create command shortcuts with `$@` argument/stdin placeholders
-- **👤 CCS Profiles**: Automatically detects CCS profiles from `~/.ccs/config.json`
+- **👤 CCS Profiles**: Automatically detects CCS profiles via `ccs api list`
 - **🔒 Security**: Built-in command validation and injection prevention
 - **🌍 Cross-Platform**: Works on macOS, Linux, and Windows
 - **⚙️ Configuration**: User-defined tools override auto-detection
 
 ## Installation
 
-### Prerequisites
+### One-line Install (macOS/Linux)
 
-- [Bun](https://bun.sh) (for building from source)
+```sh
+curl -fsSL https://raw.githubusercontent.com/jellydn/ai-cli-switcher/main/install.sh | sh
+```
+
+<details>
+<summary>Safer alternative (inspect before running)</summary>
+
+```sh
+curl -fsSL -o install.sh https://raw.githubusercontent.com/jellydn/ai-cli-switcher/main/install.sh
+less install.sh  # inspect the script
+sh install.sh
+```
+
+</details>
+
+### Homebrew (macOS/Linux)
+
+```sh
+brew install jellydn/tap/ai
+```
+
+### Windows
+
+Download the latest `ai-windows-x64.exe` from [Releases](https://github.com/jellydn/ai-cli-switcher/releases) and add to your PATH.
 
 ### Build from Source
 
-```bash
-# Clone and install dependencies
-git clone https://github.com/jellydn/ai-cli-router
-cd ai-cli-router
-bun install
+Requires [Bun](https://bun.sh):
 
-# Build the executable
+```bash
+git clone https://github.com/jellydn/ai-cli-switcher
+cd ai-cli-switcher
+bun install
 bun run build
 ```
 
 This produces a standalone executable at `dist/ai`.
 
-### Install to PATH
-
-Symlink the executable to a directory in your PATH:
+### Manual Install
 
 ```bash
 # Option 1: Symlink to /usr/local/bin (requires sudo)
@@ -59,7 +79,7 @@ sudo ln -sf "$(pwd)/dist/ai" /usr/local/bin/ai
 # Option 2: Symlink to ~/.local/bin (no sudo required)
 mkdir -p ~/.local/bin
 ln -sf "$(pwd)/dist/ai" ~/.local/bin/ai
-# Make sure ~/.local/bin is in your PATH
+# Ensure ~/.local/bin is in your PATH
 ```
 
 Verify installation:
@@ -142,7 +162,7 @@ Both methods substitute content into the `$@` placeholder. If no input is provid
 
 ## Configuration
 
-Config file location: `~/.config/ai-router/config.json`
+Config file location: `~/.config/ai-switcher/config.json`
 
 A default config is created on first run. Example:
 
@@ -204,7 +224,7 @@ The following CLIs are auto-detected if installed and available in PATH:
 - `claude` - Anthropic Claude CLI
 - `opencode` - OpenCode AI assistant
 - `amp` - Sourcegraph Amp CLI
-- `ccs` - **Claude Code Switch** (with profile detection from `~/.ccs/config.json`)
+- `ccs` - **Claude Code Switch** (with profile detection via `ccs api list`)
 
 **Precedence Rules:**
 
@@ -213,7 +233,7 @@ The following CLIs are auto-detected if installed and available in PATH:
 3. Tools with same name or command are de-duplicated
 
 **CCS Profile Auto-Detection:**
-If `~/.ccs/config.json` exists, each profile becomes available as `ccs:profile-name`.
+Runs `ccs api list` to detect active profiles. Each profile with `[OK]` status becomes available as `ccs:<profile-name>`.
 
 ## 🛠️ Development
 
@@ -304,16 +324,6 @@ git diff | bun run src/index.ts review
 - TTY support for interactive mode
 - ANSI color support (optional, enhances experience)
 - UTF-8 encoding recommended
-
-### 🧪 Platform Testing Checklist
-
-- [ ] Interactive fuzzy search launches
-- [ ] Arrow key navigation works
-- [ ] Colors display correctly
-- [ ] Direct invocation works
-- [ ] CCS profile detection (if applicable)
-- [ ] Template substitution
-- [ ] Error messages display properly
 
 ## 🤝 Contributing
 
