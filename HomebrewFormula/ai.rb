@@ -7,41 +7,27 @@ class Ai < Formula
   on_macos do
     on_arm do
       url "https://github.com/jellydn/ai-cli-switcher/releases/latest/download/ai-darwin-arm64"
-      sha256 ""
-
-      def install
-        bin.install "ai-darwin-arm64" => "ai"
-      end
     end
 
     on_intel do
       url "https://github.com/jellydn/ai-cli-switcher/releases/latest/download/ai-darwin-x64"
-      sha256 ""
-
-      def install
-        bin.install "ai-darwin-x64" => "ai"
-      end
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/jellydn/ai-cli-switcher/releases/latest/download/ai-linux-arm64"
-      sha256 ""
-
-      def install
-        bin.install "ai-linux-arm64" => "ai"
-      end
     end
 
     on_intel do
       url "https://github.com/jellydn/ai-cli-switcher/releases/latest/download/ai-linux-x64"
-      sha256 ""
-
-      def install
-        bin.install "ai-linux-x64" => "ai"
-      end
     end
+  end
+
+  def install
+    os = OS.mac? ? "darwin" : "linux"
+    arch = Hardware::CPU.arm? ? "arm64" : "x64"
+    bin.install "ai-#{os}-#{arch}" => "ai"
   end
 
   test do

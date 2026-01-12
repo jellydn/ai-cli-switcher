@@ -4,7 +4,7 @@ This document provides guidelines for agentic coding agents working on this code
 
 ## Project Overview
 
-**ai-cli-router** - A fast, secure launcher CLI tool that switches between AI coding assistants using fuzzy search. Built with TypeScript and Bun.
+**ai-cli-switcher** - A fast, secure launcher CLI tool that switches between AI coding assistants using fuzzy search. Built with TypeScript and Bun.
 
 ## Commands
 
@@ -160,7 +160,7 @@ src/
 ### Module Responsibilities
 
 - **index.ts**: CLI entrypoint, argument parsing, tool launching
-- **config.ts**: Read/write `~/.config/ai-router/config.json`, validate config
+- **config.ts**: Read/write `~/.config/ai-switcher/config.json`, validate config
 - **detect.ts**: Find installed tools (claude, opencode, amp, ccs profiles)
 - **fuzzy-select.ts**: Terminal-based interactive selection with arrow keys
 - **lookup.ts**: Search tools by name, aliases, or fuzzy matching

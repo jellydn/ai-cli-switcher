@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="AI CLI Router Logo" width="400">
+  <img src="docs/logo.svg" alt="AI CLI Switcher Logo" width="400">
 </p>
 
-<h1 align="center">AI CLI Router</h1>
+<h1 align="center">AI CLI Switcher</h1>
  
 <p align="center">
   A fast, secure launcher CLI tool that lets you switch between different AI coding assistants using fuzzy search. Built with TypeScript and Bun for optimal performance.
@@ -36,6 +36,17 @@
 curl -fsSL https://raw.githubusercontent.com/jellydn/ai-cli-switcher/main/install.sh | sh
 ```
 
+<details>
+<summary>Safer alternative (inspect before running)</summary>
+
+```sh
+curl -fsSL -o install.sh https://raw.githubusercontent.com/jellydn/ai-cli-switcher/main/install.sh
+less install.sh  # inspect the script
+sh install.sh
+```
+
+</details>
+
 ### Homebrew (macOS/Linux)
 
 ```sh
@@ -68,6 +79,7 @@ sudo ln -sf "$(pwd)/dist/ai" /usr/local/bin/ai
 # Option 2: Symlink to ~/.local/bin (no sudo required)
 mkdir -p ~/.local/bin
 ln -sf "$(pwd)/dist/ai" ~/.local/bin/ai
+# Ensure ~/.local/bin is in your PATH
 ```
 
 Verify installation:
@@ -150,7 +162,7 @@ Both methods substitute content into the `$@` placeholder. If no input is provid
 
 ## Configuration
 
-Config file location: `~/.config/ai-router/config.json`
+Config file location: `~/.config/ai-switcher/config.json`
 
 A default config is created on first run. Example:
 

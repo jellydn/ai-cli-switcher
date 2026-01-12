@@ -90,6 +90,12 @@ jobs:
       - name: Make binaries executable
         run: chmod +x dist/ai-*
 
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum ai-* > checksums.txt
+          cat checksums.txt
+
       - name: Generate changelog
         id: changelog
         run: |
@@ -129,4 +135,5 @@ jobs:
             dist/ai-darwin-x64
             dist/ai-darwin-arm64
             dist/ai-windows-x64.exe
+            dist/checksums.txt
           generate_release_notes: false
