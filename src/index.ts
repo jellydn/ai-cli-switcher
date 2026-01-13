@@ -2,11 +2,26 @@
 
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { chmod, rename, unlink, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { loadConfig } from "./config";
 import { detectInstalledTools, mergeTools } from "./detect";
 import { fuzzySelect, toSelectableItems } from "./fuzzy-select";
 import { findToolByName, toLookupItems } from "./lookup";
 import { getColoredLogo } from "./logo";
+import { createHash } from "node:crypto";
+import { VERSION } from "./version";
+
+interface GitHubAsset {
+  name: string;
+  browser_download_url: string;
+}
+
+interface GitHubRelease {
+  tag_name: string;
+  assets: GitHubAsset[];
+}
 
 function validateToolCommand(command: string): boolean {
   const safePattern = /^[a-zA-Z0-9._\s\-"':,!?/\\|$@]+$/;
@@ -27,6 +42,11 @@ function readStdin(): string | null {
   }
 }
 
+function showVersion() {
+  console.log(`ai-cli-switcher v${VERSION}`);
+  process.exit(0);
+}
+
 function showHelp() {
   console.log(getColoredLogo("full"));
   console.log(`A fast, secure launcher for AI coding assistants.
@@ -39,6 +59,8 @@ USAGE:
 
 OPTIONS:
     --help, -h                       Show this help message
+    --version, -v                    Show version information
+    upgrade                          Upgrade to latest version
 
 EXAMPLES:
     ai                               Launch fuzzy search
@@ -46,6 +68,7 @@ EXAMPLES:
     ai c                             Launch by alias
     ai claude --help                 Pass --help to claude
     ai -- --version                  Select tool, then show version
+    ai upgrade                       Upgrade to latest version
 
 CONFIG:
     ~/.config/ai-switcher/config.json   Add custom tools, aliases, templates
@@ -97,6 +120,143 @@ function launchTool(command: string, extraArgs: string[] = [], stdinContent: str
   process.exit(child.status ?? 1);
 }
 
+async function upgrade() {
+  const os = process.platform === "darwin" ? "darwin" : "linux";
+  const arch = process.arch === "arm64" ? "arm64" : "x64";
+  const artifact = `ai-${os}-${arch}`;
+
+  console.log(`Checking for updates...`);
+
+  try {
+    const response = await fetch(
+      "https://api.github.com/repos/jellydn/ai-cli-switcher/releases/latest"
+    );
+
+    if (!response.ok) {
+      console.error(`Failed to fetch release information: ${response.statusText}`);
+      process.exit(1);
+    }
+
+    const release = (await response.json()) as GitHubRelease;
+    const latestVersion = release.tag_name.replace(/^v/, "");
+
+    if (VERSION >= latestVersion) {
+      console.log(`✓ Already on the latest version v${VERSION}`);
+      process.exit(0);
+    }
+
+    console.log(`New version available: v${latestVersion} (current: v${VERSION})`);
+    console.log(`Downloading ${artifact}...`);
+
+    const asset = release.assets.find((a) => a.name === artifact);
+
+    if (!asset) {
+      console.error(`❌ No binary found for your platform (${os}-${arch})`);
+      process.exit(1);
+    }
+
+    const downloadUrl = asset.browser_download_url;
+
+    const tempBinaryPath = join(tmpdir(), `ai-new-${Date.now()}`);
+
+    console.log(`Downloading from: ${downloadUrl}`);
+
+    const binaryResponse = await fetch(downloadUrl);
+    if (!binaryResponse.ok) {
+      console.error(`Failed to download binary: ${binaryResponse.statusText}`);
+      process.exit(1);
+    }
+
+    const binaryData = await binaryResponse.arrayBuffer();
+    await writeFile(tempBinaryPath, Buffer.from(binaryData));
+
+    const checksumAsset = release.assets.find((a) => a.name === "checksums.txt");
+
+    if (checksumAsset) {
+      console.log("Verifying checksum...");
+      const checksumResponse = await fetch(checksumAsset.browser_download_url);
+      if (checksumResponse.ok) {
+        const checksumText = await checksumResponse.text();
+        const lines = checksumText.split("\n");
+        for (const line of lines) {
+          if (line.includes(artifact)) {
+            const [expectedChecksum] = line.split(/\s+/);
+            const fileBuffer = await readFile(tempBinaryPath);
+            const actualChecksum = createHash("sha256").update(fileBuffer).digest("hex");
+
+            if (expectedChecksum !== actualChecksum) {
+              console.error(`❌ Checksum verification failed!`);
+              console.error(`Expected: ${expectedChecksum}`);
+              console.error(`Actual:   ${actualChecksum}`);
+              await unlink(tempBinaryPath);
+              process.exit(1);
+            }
+            console.log("✓ Checksum verified");
+            break;
+          }
+        }
+      }
+    }
+
+    const binaryPath = await findBinaryPath();
+    if (!binaryPath) {
+      console.error("❌ Could not locate installed binary");
+      console.error("Expected locations:");
+      console.error("  • ~/.local/bin/ai");
+      console.error("  • /usr/local/bin/ai");
+      await unlink(tempBinaryPath);
+      process.exit(1);
+    }
+
+    console.log(`Installing to: ${binaryPath}`);
+
+    try {
+      await chmod(tempBinaryPath, 0o755);
+      const backupPath = `${binaryPath}.backup`;
+      await rename(binaryPath, backupPath);
+      await rename(tempBinaryPath, binaryPath);
+      await unlink(backupPath);
+    } catch (error) {
+      console.error(`❌ Failed to install: ${error instanceof Error ? error.message : error}`);
+      await unlink(tempBinaryPath);
+      process.exit(1);
+    }
+
+    console.log(`✓ Successfully upgraded to v${latestVersion}`);
+  } catch (error) {
+    console.error(`❌ Upgrade failed: ${error instanceof Error ? error.message : error}`);
+    process.exit(1);
+  }
+}
+
+async function writeFile(filePath: string, data: Buffer) {
+  const fs = await import("node:fs/promises");
+  return fs.writeFile(filePath, data);
+}
+
+async function findBinaryPath(): Promise<string | null> {
+  const homeDir = process.env.HOME ?? "";
+  const possiblePaths = [
+    join(homeDir, ".local/bin/ai"),
+    "/usr/local/bin/ai",
+  ];
+
+  if (process.execPath.endsWith("/ai")) {
+    possiblePaths.unshift(process.execPath);
+  }
+
+  for (const path of possiblePaths) {
+    try {
+      await readFile(path);
+      return path;
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
 async function main() {
   const stdinContent = readStdin();
 
@@ -122,6 +282,15 @@ async function main() {
 
   if (args[0] === "--help" || args[0] === "-h") {
     showHelp();
+  }
+
+  if (args[0] === "--version" || args[0] === "-v") {
+    showVersion();
+  }
+
+  if (args[0] === "upgrade") {
+    await upgrade();
+    return;
   }
 
   const dashIndex = args.indexOf("--");

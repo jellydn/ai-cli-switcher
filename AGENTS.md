@@ -11,11 +11,17 @@ Guidelines for agentic coding agents working on this codebase.
 | Command | Description |
 |---------|-------------|
 | `bun run dev` | Run in development mode |
-| `bun run build` | Build standalone executable to `dist/ai` |
+| `bun run build` | Build standalone executable to `dist/ai` (generates version.ts) |
 | `bun run typecheck` | TypeScript type checking (strict mode) |
 | `bun test` | Run all unit tests |
-| `bun test <file>` | Run specific test file |
+| `bun test <file>` | Run specific test file (e.g., `bun test src/detect.test.ts`) |
 | `bun run src/index.ts <tool>` | Test with specific tool |
+
+**Before type checking:** Ensure `src/version.ts` exists (created by build or generate manually):
+```bash
+VERSION=$(node -p "require('./package.json').version")
+echo "export const VERSION = \"$VERSION\";" > src/version.ts
+```
 
 ## Code Style Guidelines
 
@@ -51,13 +57,10 @@ Guidelines for agentic coding agents working on this codebase.
 - `noUncheckedIndexedAccess` enforced - always check array access
 - `noImplicitOverride` - use `override` keyword when overriding parent methods
 - `noUnusedLocals` and `noUnusedParameters` - remove unused code
-
-```typescript
-export function detectInstalledTools(): Tool[] {
-  const detected: Tool[] = [];
-  return detected;
-}
-```
+- `verbatimModuleSyntax` - type imports must use `import type`
+- `noFallthroughCasesInSwitch` - always break or return from switch cases
+- Path alias `@/*` resolves to `src/*` for internal imports
+- ESNext target/lib for modern features
 
 ### Formatting
 
@@ -65,6 +68,29 @@ export function detectInstalledTools(): Tool[] {
 - No comments unless explaining non-obvious logic
 - Prefer readable one-liners for simple operations
 - Use helper variables for complex expressions
+
+### Constants & Helpers
+
+- Module-level constants use UPPER_SNAKE_CASE at top of file
+- Extract complex expressions into well-named helper variables
+- Group related constants together
+
+```typescript
+const ESC = "\x1b";
+const CSI = `${ESC}[`;
+const HIDE_CURSOR = `${CSI}?25l`;
+
+const hasActivePremiumSubscription =
+  user.subscription.plan.tier === 'premium' &&
+  user.subscription.status === 'active';
+```
+
+### Runtime Patterns
+
+- Use `spawnSync` from `node:child_process` for command execution
+- Terminal TTY checks: `if (!stdin.isTTY || !stdout.isTTY)`
+- Raw mode for input: `stdin.setRawMode(true)`
+- Async functions return typed `Promise<T>`
 
 ### Guard Clauses
 
@@ -105,23 +131,15 @@ main().catch((err) => {
 
 ```
 src/
-  index.ts        - CLI entrypoint and main orchestration
+  index.ts        - CLI entrypoint, argument parsing, tool launching
   config.ts       - Config loading, validation, and file operations
   detect.ts       - Auto-detect installed AI CLI tools
   fuzzy-select.ts - Interactive terminal UI with fuzzy search
   lookup.ts       - Tool lookup by name, alias, or fuzzy match
   types.ts        - Type definitions and interfaces
   logo.ts         - ASCII logo and colors
+  version.ts      - Generated at build time from package.json (in .gitignore)
 ```
-
-### Module Responsibilities
-
-- **index.ts**: CLI entrypoint, argument parsing, tool launching
-- **config.ts**: Read/write `~/.config/ai-switcher/config.json`, validate config
-- **detect.ts**: Find installed tools (claude, opencode, amp, ccs profiles)
-- **fuzzy-select.ts**: Terminal-based interactive selection with arrow keys
-- **lookup.ts**: Search tools by name, aliases, or fuzzy matching
-- **types.ts**: `Tool`, `Template`, `Config`, `SelectionResult` interfaces
 
 ## Testing
 
@@ -129,6 +147,7 @@ Write tests that give confidence to change:
 - Test behavior, not implementation details
 - Focus on user-facing functionality
 - Add tests for new features in `<module>.test.ts` files
+- Use Bun's built-in test framework: `import { describe, test, expect } from "bun:test"`
 
 ## Development Workflow
 

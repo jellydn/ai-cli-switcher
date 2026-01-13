@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile dist/ai",
+    "build": "bash scripts/build.sh",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
