@@ -10,15 +10,17 @@
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile dist/ai",
+    "build": "bash scripts/build.sh",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/semver": "^7.7.1",
     "typescript": "^5"
   },
   "dependencies": {
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "semver": "^7.6.0"
   }
 }
