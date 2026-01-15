@@ -1,0 +1,22 @@
+#!/bin/sh
+# Git pre-commit hook - runs Biome checks on staged files
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "${YELLOW}Running pre-commit checks...${NC}"
+
+# Run Biome check on staged files
+bun run check --staged 2>&1
+
+if [ $? -ne 0 ]; then
+  echo "${RED}✗ Biome checks failed!${NC}"
+  echo "${YELLOW}Fix the issues or run 'bun run check:fix' to auto-fix${NC}"
+  exit 1
+fi
+
+echo "${GREEN}✓ All checks passed!${NC}"
+exit 0

@@ -18,6 +18,11 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - run: bun run typecheck
+      - name: Run Biome checks
+        run: bun run check
 
-      - run: bun test
+      - name: Run TypeScript checks
+        run: bun run typecheck
+
+      - name: Run tests
+        run: bun test
