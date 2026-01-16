@@ -48,7 +48,7 @@ jobs:
         run: echo "${{ steps.bump.outputs.version }}" > version.txt
 
       - name: Upload version
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: version
           path: version.txt
@@ -85,7 +85,7 @@ jobs:
           bun-version: latest
 
       - name: Download version artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: version
           path: .
