@@ -44,6 +44,16 @@ export function findToolByName(query: string, items: LookupItem[]): LookupResult
     return { success: true, item: aliasMatch };
   }
 
+  const exactSuffixMatches = items.filter((i) => i.name.toLowerCase().endsWith(lowerQuery));
+  if (exactSuffixMatches.length === 1) {
+    return { success: true, item: exactSuffixMatches[0] };
+  }
+
+  const substringMatches = items.filter((i) => i.name.toLowerCase().includes(lowerQuery));
+  if (substringMatches.length === 1) {
+    return { success: true, item: substringMatches[0] };
+  }
+
   const fuse = new Fuse(items, {
     keys: ["name"],
     threshold: 0.4,
@@ -63,9 +73,9 @@ export function findToolByName(query: string, items: LookupItem[]): LookupResult
     const topScore = results[0]?.score ?? 0;
     const secondScore = results[1]?.score ?? 0;
 
-    if (Math.abs(topScore - secondScore) < 0.1) {
+    if (Math.abs(topScore - secondScore) < 0.05) {
       const ambiguousMatches = results
-        .filter((r) => Math.abs((r.score ?? 0) - topScore) < 0.1)
+        .filter((r) => Math.abs((r.score ?? 0) - topScore) < 0.05)
         .map((r) => r.item);
       return {
         success: false,
@@ -74,6 +84,10 @@ export function findToolByName(query: string, items: LookupItem[]): LookupResult
           .join("\n")}`,
         candidates: ambiguousMatches,
       };
+    }
+
+    if (topScore < 0.25) {
+      return { success: true, item: results[0]?.item };
     }
   }
 
