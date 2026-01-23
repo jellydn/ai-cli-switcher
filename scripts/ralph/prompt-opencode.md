@@ -18,9 +18,10 @@ You are an autonomous coding agent working on a software project.
 ## Progress Report Format
 
 APPEND to progress.txt (never replace, always append):
+
 ```
 ## [Date/Time] - [Story ID]
-Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
+[Session: https://opncd.ai/s/[share-id]]
 - What was implemented
 - Files changed
 - **Learnings for future iterations:**
@@ -30,7 +31,7 @@ Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
 ---
 ```
 
-Include the thread URL so future iterations can use the `read_thread` tool to reference previous work if needed.
+Note: Include the share URL (if session was shared) so future iterations can reference previous work.
 
 The learnings section is critical - it helps future iterations avoid repeating mistakes and understand the codebase better.
 
@@ -61,12 +62,14 @@ Before committing, check if any edited files have learnings worth preserving in 
    - Configuration or environment requirements
 
 **Examples of good AGENTS.md additions:**
+
 - "When modifying X, also update Y to keep them in sync"
 - "This module uses pattern Z for all API calls"
 - "Tests require the dev server running on PORT 3000"
 - "Field names must match the template exactly"
 
 **Do NOT add:**
+
 - Story-specific implementation details
 - Temporary debugging notes
 - Information already in progress.txt
@@ -84,12 +87,18 @@ Only update AGENTS.md if you have **genuinely reusable knowledge** that would he
 
 For any story that changes UI, you MUST verify it works in the browser:
 
-1. Load the `dev-browser` skill
-2. Navigate to the relevant page
-3. Verify the UI changes work as expected
+1. **Preflight Check**: Look for `chrome-devtools-mcp` in your opencode.json MCP servers config
+2. If NOT configured, print to console:
+   ```
+   ⚠️  ChromeDevTools MCP not configured. Frontend testing skipped.
+   Configure chrome-devtools-mcp for browser testing:
+   https://github.com/ChromeDevTools/chrome-devtools-mcp/
+   ```
+   Then continue without browser verification.
+3. If configured, use MCP browser tools to navigate and verify UI changes
 4. Take a screenshot if helpful for the progress log
 
-A frontend story is NOT complete until browser verification passes.
+A frontend story is NOT complete until browser verification passes (or MCP not available).
 
 ## Stop Condition
 
