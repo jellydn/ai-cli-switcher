@@ -63,4 +63,14 @@ Started: Sat Jan 24 00:04:52 +08 2026
 - Updated console output to show selected tool and running command
 - All quality checks pass: typecheck, lint, format, tests (112 pass)
 - Files changed: src/index.ts
+---
+
+## Sat Jan 24 00:50:00 +08 2026 - US-005
+[Session: https://opncd.ai/s/ralph-2026-01-24-005]
+- Updated help text with passthrough examples
+- Added: 'ai claude /slop' - Pass /slop to claude
+- Added: 'ai o --help' - Show opencode's help
+- Added: 'ai -- /slop' - Select tool, then pass /slop
+- All quality checks pass: typecheck, lint, format, tests (112 pass)
+- Files changed: src/index.ts
 

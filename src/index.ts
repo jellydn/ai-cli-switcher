@@ -48,7 +48,10 @@ EXAMPLES:
     ai                               Launch fuzzy search
     ai claude                        Launch Claude directly
     ai c                             Launch by alias
+    ai claude /slop                  Pass /slop to claude
+    ai o --help                      Show opencode's help
     ai claude --help                 Pass --help to claude
+    ai -- /slop                      Select tool, then pass /slop
     ai -- --version                  Select tool, then show version
     ai upgrade                       Upgrade to latest version
 
