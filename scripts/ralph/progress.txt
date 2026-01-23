@@ -50,4 +50,17 @@ Started: Sat Jan 24 00:04:52 +08 2026
 - **Learnings for future iterations:**
   - US-003 was already implemented in the original codebase
   - The -- separator logic handles both fuzzy select (no tool) and direct tool invocation
+---
+
+## Sat Jan 24 00:40:00 +08 2026 - US-004
+[Session: https://opncd.ai/s/ralph-2026-01-24-004]
+- Added optional args prompt after fuzzy selection for non-template tools
+- Prompt: "Arguments (optional, press Enter to skip):"
+- Empty input launches tool without args
+- Entered args pass directly to the tool (split by whitespace)
+- Templates with $@ continue using existing prompt behavior
+- Non-template tools without $@ now get the new optional args prompt
+- Updated console output to show selected tool and running command
+- All quality checks pass: typecheck, lint, format, tests (112 pass)
+- Files changed: src/index.ts
 

@@ -203,8 +203,13 @@ async function main() {
       console.log(`\nRunning: ${finalCommand}\n`);
       launchTool(finalCommand, [], stdinContent);
     } else {
-      console.log(`\nRunning: ${result.item.command}\n`);
-      launchTool(result.item.command, [], stdinContent);
+      console.log(`\nSelected: ${result.item.name}`);
+      const input = await promptForInput("Arguments (optional, press Enter to skip): ");
+      const extraArgs = input.trim().length > 0 ? input.trim().split(/\s+/) : [];
+      console.log(
+        `\nRunning: ${result.item.command}${extraArgs.length > 0 ? ` ${extraArgs.join(" ")}` : ""}\n`
+      );
+      launchTool(result.item.command, extraArgs, stdinContent);
     }
   }
 }
