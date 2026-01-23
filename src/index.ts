@@ -15,11 +15,6 @@ function validateToolCommand(command: string): boolean {
   return safePattern.test(command.trim()) && command.length > 0 && command.length <= 500;
 }
 
-function validateArguments(args: string[]): boolean {
-  const safePattern = /^[a-zA-Z0-9._\-"/\\@#=\s,.:()[\]{}]+$/;
-  return args.every((arg) => safePattern.test(arg) && arg.length <= 200);
-}
-
 function readStdin(): string | null {
   try {
     if (process.stdin.isTTY) return null;
@@ -66,11 +61,6 @@ CONFIG:
 function launchTool(command: string, extraArgs: string[] = [], stdinContent: string | null = null) {
   if (!validateToolCommand(command)) {
     console.error("Invalid command format");
-    process.exit(1);
-  }
-
-  if (!validateArguments(extraArgs)) {
-    console.error("Invalid argument format");
     process.exit(1);
   }
 
