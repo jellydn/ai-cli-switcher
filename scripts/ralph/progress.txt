@@ -34,4 +34,20 @@ Started: Sat Jan 24 00:04:52 +08 2026
   - US-002 was effectively implemented by US-001 (removing validateArguments)
   - No code changes needed - functionality was already present
   - Always verify if a story is already complete before implementing
+  - US-002 and US-003 were already implemented by US-001 changes
+---
+
+## Sat Jan 24 00:30:00 +08 2026 - US-003
+[Session: https://opncd.ai/s/ralph-2026-01-24-003]
+- Verified passthrough after fuzzy selection with separator
+- Tested: 'ai -- /slop' opens fuzzy selector, passes /slop to selected tool
+- Tested: 'ai -- --help' opens fuzzy selector, passes --help to selected tool
+- Tested: 'ai claude -- /slop' passes /slop to claude
+- Tested: 'ai claude -- --help' passes --help to claude
+- Multiple args after -- all pass through correctly
+- Existing -- separator behavior preserved (no breaking changes)
+- All quality checks pass: typecheck, lint, format, tests (112 pass)
+- **Learnings for future iterations:**
+  - US-003 was already implemented in the original codebase
+  - The -- separator logic handles both fuzzy select (no tool) and direct tool invocation
 

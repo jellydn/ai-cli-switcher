@@ -45,8 +45,8 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Verified: -- separator works correctly for both fuzzy select and direct tool invocation."
     },
     {
       "id": "US-004",
