@@ -15,11 +15,6 @@ function validateToolCommand(command: string): boolean {
   return safePattern.test(command.trim()) && command.length > 0 && command.length <= 500;
 }
 
-function validateArguments(args: string[]): boolean {
-  const safePattern = /^[a-zA-Z0-9._\-"/\\@#=\s,.:()[\]{}]+$/;
-  return args.every((arg) => safePattern.test(arg) && arg.length <= 200);
-}
-
 function readStdin(): string | null {
   try {
     if (process.stdin.isTTY) return null;
@@ -53,7 +48,10 @@ EXAMPLES:
     ai                               Launch fuzzy search
     ai claude                        Launch Claude directly
     ai c                             Launch by alias
+    ai claude /slop                  Pass /slop to claude
+    ai o --help                      Show opencode's help
     ai claude --help                 Pass --help to claude
+    ai -- /slop                      Select tool, then pass /slop
     ai -- --version                  Select tool, then show version
     ai upgrade                       Upgrade to latest version
 
@@ -66,11 +64,6 @@ CONFIG:
 function launchTool(command: string, extraArgs: string[] = [], stdinContent: string | null = null) {
   if (!validateToolCommand(command)) {
     console.error("Invalid command format");
-    process.exit(1);
-  }
-
-  if (!validateArguments(extraArgs)) {
-    console.error("Invalid argument format");
     process.exit(1);
   }
 
@@ -213,8 +206,13 @@ async function main() {
       console.log(`\nRunning: ${finalCommand}\n`);
       launchTool(finalCommand, [], stdinContent);
     } else {
-      console.log(`\nRunning: ${result.item.command}\n`);
-      launchTool(result.item.command, [], stdinContent);
+      console.log(`\nSelected: ${result.item.name}`);
+      const input = await promptForInput("Arguments (optional, press Enter to skip): ");
+      const extraArgs = input.trim().length > 0 ? input.trim().split(/\s+/) : [];
+      console.log(
+        `\nRunning: ${result.item.command}${extraArgs.length > 0 ? ` ${extraArgs.join(" ")}` : ""}\n`
+      );
+      launchTool(result.item.command, extraArgs, stdinContent);
     }
   }
 }

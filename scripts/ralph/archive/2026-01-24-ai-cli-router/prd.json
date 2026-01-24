@@ -15,8 +15,8 @@
         "Typecheck passes"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "validateArguments() function removed entirely from codebase"
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-002",
@@ -30,8 +30,8 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "Lines 173-189: extraArgs = args.slice(1) passed to launchTool"
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-003",
@@ -45,8 +45,8 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "Lines 148-155: beforeDash.length === 0 triggers fuzzy select, afterDash passed through"
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-004",
@@ -61,8 +61,8 @@
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Lines 208-216: prompts for optional args, splits and passes to launchTool"
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-005",
@@ -75,8 +75,8 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": true,
-      "notes": "Lines 51-55: help shows 'ai claude /slop', 'ai o --help', 'ai -- /slop' examples"
+      "passes": false,
+      "notes": ""
     }
   ]
 }
