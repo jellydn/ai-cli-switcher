@@ -57,7 +57,7 @@ describe("validateTemplate", () => {
 
     const errors = validateTemplate(template, "templates[0]");
     expect(errors.length).toBeGreaterThan(0);
-    expect(errors[0]?.message).toContain("unsafe characters");
+    expect(errors[0]?.message).toMatch(/unsafe (characters|command substitution)/);
   });
 
   test("requires name, command, and description", () => {
@@ -94,5 +94,27 @@ describe("validateTemplate", () => {
     const errors = validateTemplate(template, "templates[0]");
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0]?.message).toContain("aliases");
+  });
+
+  test("accepts template with backtick characters for shell prompts", () => {
+    const template = {
+      name: "review-cleanup",
+      command: "claude -p `You're reviewing code cleanup. Remove excessive comments: $@`",
+      description: "AI-generated code cleanup",
+    };
+
+    const errors = validateTemplate(template, "templates[0]");
+    expect(errors).toHaveLength(0);
+  });
+
+  test("accepts template with backticks and single quotes mixed", () => {
+    const template = {
+      name: "tidy-first",
+      command: "claude -p `Apply Tidy First: 1) Guard clauses 2) Extract helpers. Focus on: $@`",
+      description: "Apply tidy first principles",
+    };
+
+    const errors = validateTemplate(template, "templates[0]");
+    expect(errors).toHaveLength(0);
   });
 });

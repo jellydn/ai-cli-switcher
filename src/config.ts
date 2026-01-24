@@ -91,11 +91,20 @@ export function validateTemplate(template: unknown, path: string): ConfigValidat
       message: "Template command is required and must be a non-empty string",
     });
   } else {
-    const safeTemplatePattern = /^[a-zA-Z0-9._\s\-"':,!?/\\|$@]+$/;
+    const safeTemplatePattern = /^[a-zA-Z0-9._\s\-"':,!?/\\|$@`()]+$/;
     if (!safeTemplatePattern.test(t.command.trim())) {
       errors.push({
         path: `${path}.command`,
         message: "Template command contains unsafe characters",
+      });
+    }
+
+    const commandSubPattern = /\$\([^)]+\)/;
+    if (commandSubPattern.test(t.command)) {
+      errors.push({
+        path: `${path}.command`,
+        message:
+          "Template command contains unsafe command substitution $(...). Use $@ for placeholders only.",
       });
     }
 

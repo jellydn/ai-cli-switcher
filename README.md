@@ -445,7 +445,7 @@ Expand your toolkit with these templates that work with your existing tools:
   "templates": [
     {
       "name": "remove-ai-slop",
-      "command": "claude -p 'You\\'re reviewing code cleanup. Remove: 1) Excessive comments that break existing documentation style 2) Defensive checks that don\\'t match the codebase\\'s trust model 3) Type escape hatches (any casts, assertions) 4) Generic patterns that feel imported rather than native. Match the file\\'s existing voice and conventions. Report what you removed in 1-3 sentences: $@'",
+      "command": "claude -p \"You're reviewing code cleanup. Remove: 1) Excessive comments that break existing documentation style 2) Defensive checks that don't match the codebase's trust model 3) Type escape hatches (any casts, assertions) 4) Generic patterns that feel imported rather than native. Match the file's existing voice and conventions. Report what you removed in 1-3 sentences: $@\"",
       "description": "Remove AI-generated code patterns",
       "aliases": ["slop", "clean-ai"]
     },
@@ -457,7 +457,7 @@ Expand your toolkit with these templates that work with your existing tools:
     },
     {
       "name": "simplify",
-      "command": "claude -p 'Simplify this code: Remove unnecessary complexity, eliminate over-engineering, reduce coupling. Keep solutions simple and focused on what\\'s actually needed: $@'",
+      "command": "claude -p \"Simplify this code: Remove unnecessary complexity, eliminate over-engineering, reduce coupling. Keep solutions simple and focused on what's actually needed: $@\"",
       "description": "Simplify over-engineered code",
       "aliases": ["simple"]
     }

@@ -11,7 +11,7 @@ import { upgrade } from "./upgrade";
 import { VERSION } from "./version";
 
 function validateToolCommand(command: string): boolean {
-  const safePattern = /^[a-zA-Z0-9._\s\-"':,!?/\\|$@]+$/;
+  const safePattern = /^[a-zA-Z0-9._\s\-"':,!?/\\|$@`()]+$/;
   return safePattern.test(command.trim()) && command.length > 0 && command.length <= 500;
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { validateConfig } from "./config";
 import { findToolByName, toLookupItems } from "./lookup";
-import type { Template, Tool } from "./types";
+import type { Tool } from "./types";
 
 describe("Template Validation", () => {
   test("valid template passes validation", () => {
@@ -121,7 +121,7 @@ describe("Template Validation", () => {
 
 describe("Template Lookup", () => {
   const tools: Tool[] = [{ name: "claude", command: "claude", aliases: ["c"] }];
-  const templates: Template[] = [
+  const templates: { name: string; command: string; description: string; aliases?: string[] }[] = [
     {
       name: "review",
       command: "amp -x 'Review: $@'",
@@ -297,5 +297,64 @@ describe("Template Execution", () => {
     const result = parseTemplateCommand("amp -x 'Review: hello'");
     expect(result.cmd).toBe("amp");
     expect(result.args).toContain("-x");
+  });
+});
+
+describe("Template Edge Cases", () => {
+  test("template with multiple $@ placeholders", async () => {
+    const { buildTemplateCommand } = await import("./template");
+    const result = buildTemplateCommand("claude -p 'Review $@ and explain $@'", [
+      "file1.ts",
+      "file2.ts",
+    ]);
+    expect(result).toBe("claude -p 'Review file1.ts file2.ts and explain $@'");
+  });
+
+  test("template with empty args for $@", async () => {
+    const { buildTemplateCommand } = await import("./template");
+    const result = buildTemplateCommand("claude -p 'Summarize: $@'", []);
+    expect(result).toBe("claude -p 'Summarize: '");
+  });
+
+  test("template with colon in name", async () => {
+    const { parseTemplateCommand } = await import("./template");
+    const result = parseTemplateCommand("ccs glm 'Create draft pr'");
+    expect(result.cmd).toBe("ccs");
+    expect(result.args).toEqual(["glm", "'Create draft pr'"]);
+  });
+
+  test("template command with double quotes inside single quotes", async () => {
+    const { buildTemplateCommand, validateTemplateCommand } = await import("./template");
+    const command = "claude -p 'Explain: \"hello world\" and more: $@'";
+    const result = buildTemplateCommand(command, ["src/file.ts"]);
+    expect(result).toBe("claude -p 'Explain: \"hello world\" and more: src/file.ts'");
+    expect(validateTemplateCommand(command)).toBe(true);
+  });
+
+  test("template with complex prompt and special characters", async () => {
+    const { validateTemplateCommand } = await import("./template");
+    expect(
+      validateTemplateCommand("claude -p 'Check [security] issues: (injection, xss, csrf) for: $@'")
+    ).toBe(true);
+  });
+});
+
+describe("Template Security", () => {
+  test("rejects shell operators and command substitution", async () => {
+    const { validateTemplateCommand } = await import("./template");
+    expect(validateTemplateCommand("amp && rm -rf /")).toBe(false);
+    expect(validateTemplateCommand("amp || rm -rf /")).toBe(false);
+    expect(validateTemplateCommand("amp; rm -rf /")).toBe(false);
+    expect(validateTemplateCommand("amp $(whoami)")).toBe(false);
+    expect(validateTemplateCommand("amp `whoami`")).toBe(false);
+    expect(validateTemplateCommand("sudo amp")).toBe(false);
+    expect(validateTemplateCommand("amp > /dev/null")).toBe(false);
+  });
+
+  test("accepts special characters in prompts", async () => {
+    const { validateTemplateCommand } = await import("./template");
+    expect(validateTemplateCommand("claude -p 'Check <script> tags: $@'")).toBe(true);
+    expect(validateTemplateCommand("amp 'Review <file>: $@'")).toBe(true);
+    expect(validateTemplateCommand("claude -p 'Check A | B: $@'")).toBe(true);
   });
 });
